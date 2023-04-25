@@ -186,7 +186,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: steps.tag.outputs.status == 'success' && !cancelled()
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.REPO_KEY }}
       with:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
@@ -205,7 +205,7 @@ jobs:
         keep_latest: 3
         delete_tags: true
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.REPO_KEY }}
         
      - name: 自用消息推送
       run: curl "${{ secrets.NOTIAPI }}" -d "title=🅾️恭喜主人X86-immortalwrtOS固件编译完成！&desp=🅾️恭喜主人X86-immortalwrtOS固件编译完成！🎉%0A⏰编译时间：${{ env.DATE }}%0A📥下载地址：https://github.com/a857112551/openwrt-Project/releases/tag/${{ env.TAG_TIME }}%0A"
