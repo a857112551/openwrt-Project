@@ -18,11 +18,20 @@ on:
         description: 'SSH connection to Actions'
         required: false
         default: 'false'
-        type : choice
+        type : boolean
+      REPO_BRANCH:
+        description: '源码-请选择分支'
+        required: true
+        default: 'openwrt-21.02'
+        type: choice
+        options:
+          - 'openwrt-21.02'
+          - 'openwrt-18.06-k5.4'
+          - 'openwrt-18.06'
+          - 'master'
 
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
-  REPO_BRANCH: openwrt-21.02
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: .config
   DIY_P1_SH: diy-part1.sh
@@ -60,7 +69,7 @@ jobs:
       working-directory: /workdir
       run: |
         df -hT $PWD
-        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        git clone $REPO_URL -b ${{ github.event.inputs.REPO_BRANCH }} openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
         cd openwrt
         useVersionInfo=$(git show -s --date=short --format="%0AAuthor: %an%0Adate: %cd%0Acommit: %s%0Acommit hash: %H")
