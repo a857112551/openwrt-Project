@@ -34,6 +34,8 @@ sed -i 's/"PowerOff"/"关机"/g' `egrep "PowerOff" -rl ./`
 sed -i 's/"网络加速"/"Turbo Acc网络加速"/g' `egrep "网络加速" -rl ./`
 sed -i 's/"Disk Man"/"磁盘管理"/g' `egrep "Disk Man" -rl ./`
 sed -i 's/"Scheduled Reboot"/"定时重启"/g' `egrep "Scheduled Reboot" -rl ./`
+sed -i 's/"AutoUpdate"/"在线升级"/g' `egrep "AutoUpdate" -rl ./`
+
 #rm -rf ./package/diy-ziyong/theme
 #rm -rf ./package/diy-ziyong/luci-app-wrtbwmon-zh
 #rm -rf ./package/diy-ziyong/wrtbwmon
