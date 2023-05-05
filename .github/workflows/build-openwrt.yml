@@ -191,23 +191,24 @@ jobs:
         echo "status=success" >> $GITHUB_OUTPUT
 
     - name: 发布至release
-      uses: ncipollo/release-action@main
+      uses: softprops/action-gh-release@master
       if: steps.tag.outputs.status == 'success' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.REPO_KEY }}
       with:
+        files: "${{ env.FIRMWARE }}/*"
         name: 固件发布-${{ env.TAG_TIME }}
-        tag: ${{ env.TAG_TIME }}
-        token: ${{ secrets.REPO_TOKEN }}
-        artifacts: ${{ env.FIRMWARE }}/*
-        allowUpdates: true
+        tag_name: ${{ env.TAG_TIME }}
+        body_path: release.txt
 
     - name: 删除旧的自动化编译
-      uses: GitRML/delete-workflow-runs@main
+      uses: Mattraks/delete-workflow-runs@main
       with:
         retain_days: 1
         keep_minimum_runs: 3
 
     - name: 删除旧的Releases
-      uses: dev-drprasad/delete-older-releases@v0.1.0
+      uses: dev-drprasad/delete-older-releases@master
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
         keep_latest: 3
