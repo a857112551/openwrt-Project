@@ -16,6 +16,7 @@ sed -i 's/192.168.1.1/192.168.123.1/g' package/base-files/files/bin/config_gener
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' ./feeds/luci/collections/luci/Makefile
 
 # 修改插件名字
+
 sed -i 's/"终端"/"TTYD"/g' `egrep "终端" -rl ./`
 sed -i 's/"aMule设置"/"电驴下载"/g' `egrep "aMule设置" -rl ./`
 sed -i 's/"网络存储"/"NAS"/g' `egrep "网络存储" -rl ./`
