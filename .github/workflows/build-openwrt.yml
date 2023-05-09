@@ -297,5 +297,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.REPO_KEY }}
                     
     - name: 自用消息推送
-      run: curl "${{ secrets.NOTIAPI }}" -d "title=🅾️恭喜主人test版X86-immortalwrtOS固件编译完成！&desp=🅾️恭喜主人test版X86-immortalwrtOS固件编译完成！🎉%0A⏰编译时间：${{ env.DATE }}%0A📥下载地址：https://github.com/${{github.repository}}/releases/tags/${{ env.TAG_TIME }}%0A"
-
+      run: curl "${{ secrets.NOTIAPI }}" -d "title=🅾️恭喜主人main版X86-immortalwrtOS固件编译完成！&desp=🅾️恭喜主人main版X86-immortalwrtOS固件编译完成！🎉%0A⏰编译时间：${{ env.DATE }}%0A📥下载地址：https://github.com/${{github.repository}}/releases/tags/${{ env.TAG_TIME }}%0A"
