@@ -82,6 +82,8 @@ jobs:
         chmod +x $DIY_P1_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
+        echo "times=$(date +%s)" >> $GITHUB_ENV
+        echo "TARGET_BOARD=x86" >> $GITHUB_ENV
 
     - name: 下载更新插件
       run: cd openwrt && ./scripts/feeds update -a
@@ -96,6 +98,26 @@ jobs:
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
+        # 生成在线更新配置
+        cat >"${GITHUB_WORKSPACE}/openwrt/package/base-files/files/etc/openwrt_update" <<-EOF
+        GITHUB_LINK=https://github.com/${{github.repository}}
+        CURRENT_Version=Immortalwrt-x86-64-${{ env.times }}
+        SOURCE="Immortalwrt"
+        LUCI_EDITION="${{ github.event.inputs.REPO_BRANCH }}"
+        DEFAULT_Device="x86-64"
+        Firmware_SFX=".img.gz"
+        TARGET_BOARD="${{ env.TARGET_BOARD }}"
+        CLOUD_CHAZHAO="Immortalwrt-x86-64"
+        Download_Path="/tmp/Downloads"
+        Version="8.0"
+        API_PATH="/tmp/Downloads/zzz_api"
+        Github_API1="https://api.github.com/repos/${{github.repository}}/releases/tags/${{ env.TARGET_BOARD }}"
+        Github_API2="${{ secrets.GIT_SPEED }}https://github.com/${{github.repository}}/releases/download/${{ env.TARGET_BOARD }}/zzz_api"
+        Github_Release="https://github.com/${{github.repository}}/releases/tag/${{ env.TARGET_BOARD }}"
+        Release_download1="https://github.com/${{github.repository}}/releases/download/${{ env.TARGET_BOARD }}"
+        Release_download2="${{ secrets.GIT_SPEED }}https://github.com/${{github.repository}}/releases/download/${{ env.TARGET_BOARD }}"
+        EOF
+        sudo chmod +x ${GITHUB_WORKSPACE}/openwrt/package/base-files/files/etc/openwrt_update
 
     - name: SSH链接管理
       uses: P3TERX/ssh2actions@v1.0.0
@@ -159,25 +181,7 @@ jobs:
       with:
         name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
-
-    - name: 上传固件到NN网盘
-      id: cowtransfer
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
-      run: |
-        curl -fsSL git.io/file-transfer | sh
-        ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
-        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
-        echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
-
-    - name: 上传固件到WT网盘
-      id: wetransfer
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
-      run: |
-        curl -fsSL git.io/file-transfer | sh
-        ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
-        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
-        echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
-
+                    
     - name: 创建release标签
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
@@ -187,7 +191,7 @@ jobs:
         echo "[固件源码](https://github.com/immortalwrt/immortalwrt/tree/master)" >> release.txt
         echo "由衷感谢所有为openwrt无私奉献的大佬们" >> release.txt
         echo "📥 固件下载" >> release.txt
-        echo "🔗 [github release](https://github.com/a857112551/openwrt-Project/releases/tag/${{ env.TAG_TIME }})" >> release.txt
+        echo "🔗 [github release](https://github.com/${{github.repository}}/releases/tag/${{ env.TAG_TIME }})" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
 
     - name: 发布至release
@@ -200,6 +204,82 @@ jobs:
         name: 固件发布-${{ env.TAG_TIME }}
         tag_name: ${{ env.TAG_TIME }}
         body_path: release.txt
+        
+    - name: 创建在线更新release标签
+      id: autoupdatetag1
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      run: |
+        cd ${{ env.FIRMWARE }}
+        mkdir -p autoupdaterelease
+        cd autoupdaterelease
+        touch release.txt
+        echo "在线更新用部分，请勿删除" >> release.txt
+        echo "更新时间：${{ env.TAG_TIME }}" >> release.txt
+        echo "status=success" >> $GITHUB_OUTPUT
+        
+    - name: 发布在线更新release标签
+      id: autoupdatetag2
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      uses: softprops/action-gh-release@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.REPO_KEY }}
+      with:
+        name: AutoUpdate
+        tag_name: x86
+        body_path: "${{ env.FIRMWARE }}/autoupdaterelease/release.txt"
+        
+    - name: 计算自动更新文件md5
+      id: autoupdateMD5
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      run: |
+        EFIMD5="$(md5sum ${{ env.FIRMWARE }}/immortalwrt-x86-64-generic-squashfs-combined-efi.img.gz |cut -c1-3)$(sha256sum ${{ env.FIRMWARE }}/immortalwrt-x86-64-generic-squashfs-combined-efi.img.gz |cut -c1-3)"
+        echo "EFIMD5=$EFIMD5" >> $GITHUB_ENV
+        
+        LEGAMD5="$(md5sum ${{ env.FIRMWARE }}/immortalwrt-x86-64-generic-squashfs-combined.img.gz |cut -c1-3)$(sha256sum ${{ env.FIRMWARE }}/immortalwrt-x86-64-generic-squashfs-combined.img.gz |cut -c1-3)"
+        echo "LEGAMD5=$LEGAMD5" >> $GITHUB_ENV
+                
+    - name: 发布在线更新步骤1
+      id: autoupdate1
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      run: |
+        cd ${{ env.FIRMWARE }}
+        mkdir -p Github_Api
+        cd Github_Api
+        cp ${{ env.FIRMWARE }}/immortalwrt-x86-64-generic-squashfs-combined-efi.img.gz Immortalwrt-x86-64-${{ env.times }}-efi-${{ env.EFIMD5 }}.img.gz
+
+        cp ${{ env.FIRMWARE }}/immortalwrt-x86-64-generic-squashfs-combined.img.gz Immortalwrt-x86-64-${{ env.times }}-legacy-${{ env.LEGAMD5 }}.img.gz
+                    
+    - name: 发布在线更新步骤2
+      id: autoupdate2
+      uses: softprops/action-gh-release@master
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.REPO_KEY }}
+      with:
+        files: "${{ env.FIRMWARE }}/Github_Api/*"
+        name: AutoUpdate
+        tag_name: x86
+            
+    - name: 发布在线更新步骤3
+      id: autoupdate3
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      run: |
+        cd ${{ env.FIRMWARE }}
+        mkdir -p zzzapi
+        cd zzzapi
+        curl -H "Authorization: Bearer ${{ secrets.REPO_KEY }}" https://api.github.com/repos/${{github.repository}}/releases/tags/x86 -o zzz_api
+        echo "status=success" >> $GITHUB_OUTPUT
+        
+    - name: 发布在线更新步骤4
+      id: autoupdate4
+      uses: softprops/action-gh-release@master
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.REPO_KEY }}
+      with:
+        files: "${{ env.FIRMWARE }}/zzzapi/*"
+        name: AutoUpdate
+        tag_name: x86
 
     - name: 删除旧的自动化编译
       uses: Mattraks/delete-workflow-runs@main
@@ -215,7 +295,7 @@ jobs:
         delete_tags: true
       env:
         GITHUB_TOKEN: ${{ secrets.REPO_KEY }}
-        
+                    
     - name: 自用消息推送
-      run: curl "${{ secrets.NOTIAPI }}" -d "title=🅾️恭喜主人X86-immortalwrtOS固件编译完成！&desp=🅾️恭喜主人X86-immortalwrtOS固件编译完成！🎉%0A⏰编译时间：${{ env.DATE }}%0A📥下载地址：https://github.com/a857112551/openwrt-Project/releases/tag/${{ env.TAG_TIME }}%0A"
+      run: curl "${{ secrets.NOTIAPI }}" -d "title=🅾️恭喜主人test版X86-immortalwrtOS固件编译完成！&desp=🅾️恭喜主人test版X86-immortalwrtOS固件编译完成！🎉%0A⏰编译时间：${{ env.DATE }}%0A📥下载地址：https://github.com/${{github.repository}}/releases/tags/${{ env.TAG_TIME }}%0A"
 
