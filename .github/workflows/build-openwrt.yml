@@ -204,6 +204,15 @@ jobs:
         name: 固件发布-${{ env.TAG_TIME }}
         tag_name: ${{ env.TAG_TIME }}
         body_path: release.txt
+    
+    - name: 删除旧的Releases
+      uses: dev-drprasad/delete-older-releases@master
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      with:
+        keep_latest: 1
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.REPO_KEY }}
             
     #- name: 测试用环境
     #  id: test
@@ -291,15 +300,6 @@ jobs:
         name: AutoUpdate
         tag_name: x86
         
-    - name: 删除旧的Releases
-      uses: dev-drprasad/delete-older-releases@master
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      with:
-        keep_latest: 2
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.REPO_KEY }}
-
     - name: 删除旧的自动化编译
       uses: Mattraks/delete-workflow-runs@main
       with:
