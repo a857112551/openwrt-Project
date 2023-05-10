@@ -38,4 +38,5 @@
 #svn co https://github.com/kiddin9/openwrt-packages/trunk/wrtbwmon package/wrtbwmon
 #git clone https://github.com/sirpdboy/luci-app-advanced.git package/luci-app-advanced
 sed -i '$a src-git opentopd https://github.com/sirpdboy/sirpdboy-package' feeds.conf.default
-git clone https://github.com/281677160/luci-app-autoupdate package/luci-app-autoupdate
+git clone https://github.com/281677160/luci-app-autoupdate  package/luci-app-autoupdate
+git clone https://github.com/sirpdboy/luci-app-wizard package/luci-app-wizard
