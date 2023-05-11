@@ -15,7 +15,7 @@
 sed -i 's/192.168.1.1/192.168.123.1/g' package/base-files/files/bin/config_generate
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' ./feeds/luci/collections/luci/Makefile
 # 16384 是原来的连接数，65535 是要修改成的连接数
-sed -i 's/16384/65535/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
+# sed -i 's/16384/65535/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
 # 5 是原来的等待时间，0 是要修改的等待时间。
 sed -i 's/default "5"/default "3"/g' config/Config-images.in
 # 修改主机名
