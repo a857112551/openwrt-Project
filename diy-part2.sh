@@ -14,9 +14,16 @@
 #sed -i 's/192.168.1.1/192.168.50.5/g' package/base-files/files/bin/config_generate
 sed -i 's/192.168.1.1/192.168.123.1/g' package/base-files/files/bin/config_generate
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' ./feeds/luci/collections/luci/Makefile
+# 16384 是原来的连接数，65535 是要修改成的连接数
+sed -i 's/16384/65535/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
+# 5 是原来的等待时间，0 是要修改的等待时间。
+sed -i 's/default "5"/default "3"/g' config/Config-images.in
+# 修改主机名
+sed -i 's/ImmortalWrt/OPT-Home/g' package/base-files/files/bin/config_generate
+# 修改默认语言
+sed -i 's/option lang auto/option lang zh_cn/g' feeds/luci/modules/luci-base/root/etc/config/luci
 
 # 修改插件名字
-
 sed -i 's/"终端"/"TTYD"/g' `egrep "终端" -rl ./`
 sed -i 's/"aMule设置"/"电驴下载"/g' `egrep "aMule设置" -rl ./`
 sed -i 's/"网络存储"/"NAS"/g' `egrep "网络存储" -rl ./`
