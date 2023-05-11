@@ -36,6 +36,8 @@ sed -i 's/"网络加速"/"Turbo Acc网络加速"/g' `egrep "网络加速" -rl ./
 sed -i 's/"Disk Man"/"磁盘管理"/g' `egrep "Disk Man" -rl ./`
 sed -i 's/"Scheduled Reboot"/"定时重启"/g' `egrep "Scheduled Reboot" -rl ./`
 sed -i 's/"AutoUpdate"/"在线升级"/g' `egrep "AutoUpdate" -rl ./`
+sed -i 's/"Partition_Expansion"/"分区扩容"/g' `egrep "Partition_Expansion" -rl ./`
+sed -i 's/"GoWebDav"/"WebDav"/g' `egrep "GoWebDav" -rl ./`
 
 #rm -rf ./package/diy-ziyong/theme
 #rm -rf ./package/diy-ziyong/luci-app-wrtbwmon-zh
