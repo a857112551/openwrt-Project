@@ -39,6 +39,6 @@
 #git clone https://github.com/sirpdboy/luci-app-advanced.git package/luci-app-advanced
 sed -i '$a src-git opentopd https://github.com/sirpdboy/sirpdboy-package' feeds.conf.default
 git clone https://github.com/281677160/luci-app-autoupdate  package/luci-app-autoupdate
-git clone https://github.com/sirpdboy/luci-app-wizard package/luci-app-wizard
+# git clone https://github.com/sirpdboy/luci-app-wizard package/luci-app-wizard
 git clone https://github.com/sirpdboy/luci-app-partexp.git package/luci-app-partexp
 # git clone https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
