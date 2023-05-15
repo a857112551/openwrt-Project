@@ -98,7 +98,9 @@ jobs:
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
-        # 生成在线更新配置
+ 
+    - name: 生成在线更新配置
+      run: |
         cat >"${GITHUB_WORKSPACE}/openwrt/package/base-files/files/etc/openwrt_update" <<-EOF
         GITHUB_LINK=https://github.com/${{github.repository}}
         CURRENT_Version=Immortalwrt-x86-64-${{ env.times }}
@@ -118,7 +120,7 @@ jobs:
         Release_download2="${{ secrets.GIT_SPEED }}https://github.com/${{github.repository}}/releases/download/${{ env.TARGET_BOARD }}"
         EOF
         sudo chmod +x ${GITHUB_WORKSPACE}/openwrt/package/base-files/files/etc/openwrt_update
-
+      
     - name: SSH链接管理
       uses: P3TERX/ssh2actions@v1.0.0
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
@@ -308,4 +310,4 @@ jobs:
                         
     - name: 自用消息推送
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      run: curl "${{ secrets.NOTIAPI }}" -d "title=🅾️恭喜主人main版X86-immortalwrtOS固件编译完成！&desp=🅾️恭喜主人main版X86-immortalwrtOS固件编译完成！🎉%0A⏰编译时间：${{ env.DATE }}%0A📥下载地址：https://github.com/${{github.repository}}/releases/tags/${{ env.TAG_TIME }}"
+      run: curl "${{ secrets.NOTIAPI }}" -d "title=🅾️恭喜主人main版X86-immortalwrtOS固件编译完成！&desp=🅾️恭喜主人main版X86-immortalwrtOS固件编译完成！🎉%0A⏰编译时间：${{ env.DATE }}%0A📥下载地址：https://github.com/${{github.repository}}/releases/tag/${{ env.TAG_TIME }}"
