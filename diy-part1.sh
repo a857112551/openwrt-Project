@@ -42,3 +42,5 @@ git clone https://github.com/281677160/luci-app-autoupdate  package/luci-app-aut
 # git clone https://github.com/sirpdboy/luci-app-wizard package/luci-app-wizard
 git clone https://github.com/sirpdboy/luci-app-partexp.git package/luci-app-partexp
 # git clone https://github.com/sirpdboy/luci-app-poweroffdevice package/luci-app-poweroffdevice
+sed -i '$a src-git luci-app-adguardhome https://github.com/rufengsuixing/luci-app-adguardhome' feeds.conf.default
+
