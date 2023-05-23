@@ -49,7 +49,7 @@ sed -i 's/"GoWebDav"/"WebDav"/g' `egrep "GoWebDav" -rl ./`
 #rm -rf ./package/diy-ziyong/theme
 #rm -rf ./package/diy-ziyong/luci-app-wrtbwmon-zh
 #rm -rf ./package/diy-ziyong/wrtbwmon
-#rm -rf ./feeds/packages/net/adguardhome
+rm -rf ./feeds/packages/net/adguardhome
 #rm -rf ./feeds/packages/net/smartdns
 #rm -rf ./feeds/packages/net/mosdns
 #rm -rf ./feeds/luci/applications/luci-app-passwall
