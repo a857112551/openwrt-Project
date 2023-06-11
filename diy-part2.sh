@@ -11,17 +11,18 @@
 #
 
 # Modify default IP
-#sed -i 's/192.168.1.1/192.168.50.5/g' package/base-files/files/bin/config_generate
 sed -i 's/192.168.1.1/192.168.123.1/g' package/base-files/files/bin/config_generate
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' ./feeds/luci/collections/luci/Makefile
 # 16384 是原来的连接数，65535 是要修改成的连接数
 # sed -i 's/16384/65535/g' package/kernel/linux/files/sysctl-nf-conntrack.conf
 # 5 是原来的等待时间，0 是要修改的等待时间。
-sed -i 's/default "5"/default "3"/g' config/Config-images.in
+# sed -i 's/default "5"/default "3"/g' config/Config-images.in
 # 修改主机名
 sed -i 's/ImmortalWrt/OPT-Home/g' package/base-files/files/bin/config_generate
 # 修改默认语言
 sed -i 's/option lang auto/option lang zh_cn/g' feeds/luci/modules/luci-base/root/etc/config/luci
+# 删除默认密码
+sed -i "/CYXluq4wUazHjmCDBCqXF/d" package/lean/default-settings/files/zzz-default-settings
 
 # 修改插件名字
 sed -i 's/"终端"/"TTYD"/g' `egrep "终端" -rl ./`
@@ -46,13 +47,16 @@ sed -i 's/"AutoUpdate"/"在线升级"/g' `egrep "AutoUpdate" -rl ./`
 sed -i 's/"Partition Expansion"/"分区扩容"/g' `egrep "Partition Expansion" -rl ./`
 sed -i 's/"GoWebDav"/"WebDav"/g' `egrep "GoWebDav" -rl ./`
 
-#rm -rf ./package/diy-ziyong/theme
-#rm -rf ./package/diy-ziyong/luci-app-wrtbwmon-zh
-#rm -rf ./package/diy-ziyong/wrtbwmon
+rm -rf ./package/diy-ziyong/theme
+rm -rf ./package/diy-ziyong/luci-app-wrtbwmon-zh
+rm -rf ./package/diy-ziyong/wrtbwmon
 rm -rf ./feeds/packages/net/adguardhome
-#rm -rf ./feeds/packages/net/smartdns
-#rm -rf ./feeds/packages/net/mosdns
-#rm -rf ./feeds/luci/applications/luci-app-passwall
-#rm -rf ./feeds/luci/applications/luci-app-ssr-plus
-#rm -rf ./feeds/luci/applications/luci-app-openclash
-#rm -rf ./feeds/luci/applications/luci-app-smartdns
+rm -rf ./feeds/packages/net/smartdns
+rm -rf ./feeds/packages/net/mosdns
+rm -rf ./feeds/luci/applications/luci-app-passwall
+rm -rf ./feeds/luci/applications/luci-app-ssr-plus
+rm -rf ./feeds/luci/applications/luci-app-openclash
+rm -rf ./feeds/luci/applications/luci-app-smartdns
+rm -rf ./feeds/luci/applications/luci-app-homeassistant
+rm -rf ./feeds/luci/applications/luci-app-poweroff
+rm -rf ./feeds/luci/applications/luci-app-adguardhome
