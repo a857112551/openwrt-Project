@@ -60,3 +60,7 @@ rm -rf ./feeds/luci/applications/luci-app-smartdns
 rm -rf ./feeds/luci/applications/luci-app-homeassistant
 rm -rf ./feeds/luci/applications/luci-app-poweroff
 rm -rf ./feeds/luci/applications/luci-app-adguardhome
+rm -rf ./feeds/packages/net/{alist,adguardhome,brook,gost,mosdns,redsocks*,smartdns,trojan*,v2ray*,xray*}
+
+cp -f ./feeds/smpackage/.github/diy/banner ./package/base-files/files/etc/banner
+sed -i "s/%D %V, %C/openwrt $(date +'%m.%d') by mc/g" ./package/base-files/files/etc/banner
