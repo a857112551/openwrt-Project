@@ -305,9 +305,9 @@ jobs:
     - name: 删除旧的自动化编译
       uses: Mattraks/delete-workflow-runs@main
       with:
-        retain_days: 1
+        retain_days: 3
         keep_minimum_runs: 3
                         
     - name: 自用消息推送
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      run: curl "${{ secrets.NOTIAPI }}" -d "title=🅾️恭喜主人main版X86-immortalwrtOS固件编译完成！&desp=🅾️恭喜主人main版X86-immortalwrtOS固件编译完成！🎉%0A⏰编译时间：${{ env.DATE }}%0A📥下载地址：https://github.com/${{github.repository}}/releases/tag/${{ env.TAG_TIME }}"
+      run: curl "${{ secrets.NOTIAPI }}" -d "title=🅾️恭喜主人test版X86-immortalwrtOS固件编译完成！&desp=🅾️恭喜主人main版X86-immortalwrtOS固件编译完成！🎉%0A⏰编译时间：${{ env.DATE }}%0A📥下载地址：https://github.com/${{github.repository}}/releases/tag/${{ env.TAG_TIME }}"
